@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Calculator</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="calculator">
+            <div class="title">Tambah Angka   ramandabot</div>
+            <div class="body">
+                <div id="display">0</div>
+                <div class="buttons">
+                    <button class="red"  onclick="clearAll()">C</button>
+                    <button class="red"  onclick="clearEntry()">CE</button>
+                    <button class="red"  onclick="backspace()">⌫</button>
+                    <button class="red"  onclick="pressOperator('/')">÷</button>
+                    
+                    <button class="blue" onclick="pressNumber('7')">7</button>
+                    <button class="blue" onclick="pressNumber('8')">8</button>
+                    <button class="blue" onclick="pressNumber('9')">9</button>
+                    <button class="red"  onclick="pressOperator('*')">×</button>
+                    
+                    <button class="blue" onclick="pressNumber('4')">4</button>
+                    <button class="blue" onclick="pressNumber('5')">5</button>
+                    <button class="blue" onclick="pressNumber('6')">6</button>
+                    <button class="red"  onclick="pressOperator('-')">−</button>
+                    
+                    <button class="blue" onclick="pressNumber('1')">1</button>
+                    <button class="blue" onclick="pressNumber('2')">2</button>
+                    <button class="blue" onclick="pressNumber('3')">3</button>
+                    <button class="red"  onclick="pressOperator('+')">+</button>
+                    
+                    <button class="blue" onclick="toggleSign()">±</button>
+                    <button class="blue" onclick="pressNumber('0')">0</button>
+                    <button class="blue" onclick="pressDot()">.</button>
+                    <button class="red"  onclick="calculate()">=</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            let current = "0";
+            let previous = null;
+            let operator = null;
+            let startNew = false;
+            function show() {
+                document.getElementById("display").textContent = current;
+            }
+            function pressNumber(n) {
+                if (current === "0" || startNew) {
+                    current = n;
+                    startNew = false;
+                } else {
+                    current += n;
+                }
+                show();
+            }
+            function pressDot() {
+                if (startNew) {
+                    current = "0.";
+                    startNew = false;
+                } else if (!current.includes(".")) {
+                    current += ".";
+                }
+                show();
+            }
+            function pressOperator(op) {
+                if (current === "Error") return;
+                if (operator && !startNew) calculate();   // chain: 2 + 3 + ...
+                previous = current;
+                operator = op;
+                startNew = true;
+            }
+            function calculate() {
+                if (!operator) return;
+                const a = parseFloat(previous);
+                const b = parseFloat(current);
+                let result;
+                if (operator === "+") result = a + b;
+                if (operator === "-") result = a - b;
+                if (operator === "*") result = a * b;
+                if (operator === "/") result = a / b;
+                if (!isFinite(result)) {
+                    current = "Error";
+                } else {
+                    current = String(parseFloat(result.toFixed(10)));
+                }
+                operator = null;
+                startNew = true;
+                show();
+            }
+            function clearAll() {
+                current = "0";
+                previous = null;
+                operator = null;
+                startNew = false;
+                show();
+            }
+            function clearEntry() {
+                current = "0";
+                show();
+            }
+            function backspace() {
+                if (startNew || current === "Error") return;
+                current = current.length > 1 ? current.slice(0, -1) : "0";
+                show();
+            }
+            function toggleSign() {
+            if (current === "0" || current === "Error") return;
+            current = current.startsWith("-") ? current.slice(1) : "-" + current;
+            show();
+        }
+        </script>
+</body>
+</html>
